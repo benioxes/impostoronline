@@ -5,7 +5,7 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { WS_EVENTS } from "@shared/schema";
 import { z } from "zod";
-import { WORD_CATEGORIES } from "./words";
+import { getRandomWord } from "./words";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -159,10 +159,7 @@ export async function registerRoutes(
     const innocents = shuffled.slice(numImpostors);
 
     // Get random word and hint
-    const allCategories = Object.keys(WORD_CATEGORIES) as Array<keyof typeof WORD_CATEGORIES>;
-    const randomCat = allCategories[Math.floor(Math.random() * allCategories.length)];
-    const words = WORD_CATEGORIES[randomCat];
-    const randomWordObj = words[Math.floor(Math.random() * words.length)];
+    const randomWordObj = getRandomWord();
     const secretWord = randomWordObj.word;
     const hint = randomWordObj.hint;
 
