@@ -58,6 +58,16 @@ export const api = {
         400: errorSchemas.validation,
       },
     },
+    startVoting: {
+      method: 'POST' as const,
+      path: '/api/lobbies/:id/start-voting',
+      input: z.object({}),
+      responses: {
+        200: z.custom<typeof lobbies.$inferSelect>(),
+        403: errorSchemas.validation,
+        404: errorSchemas.notFound,
+      },
+    },
     vote: {
       method: 'POST' as const,
       path: '/api/lobbies/:id/vote',

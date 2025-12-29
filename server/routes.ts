@@ -197,6 +197,28 @@ export async function registerRoutes(
     res.json(updatedLobby);
   });
 
+  app.post(api.lobbies.startVoting.path, async (req, res) => {
+    const lobbyId = parseInt(req.params.id);
+    const lobby = await storage.getLobby(lobbyId);
+    if (!lobby) return res.status(404).json({ message: 'Lobby not found' });
+
+    // Reset votes for new voting round
+    const players = await storage.getPlayers(lobbyId);
+    for (const p of players) {
+      await storage.updatePlayer(p.id, { hasVoted: false, votedFor: null });
+    }
+
+    // Change status to voting
+    const updatedLobby = await storage.updateLobby(lobbyId, { status: 'voting' });
+
+    broadcast(lobbyId, WS_EVENTS.LOBBY_UPDATE, {
+      lobby: updatedLobby,
+      players: await storage.getPlayers(lobbyId)
+    });
+
+    res.json(updatedLobby);
+  });
+
   app.post(api.lobbies.vote.path, async (req, res) => {
     const lobbyId = parseInt(req.params.id);
     const { targetId, playerId } = api.lobbies.vote.input.parse(req.body);

@@ -147,6 +147,27 @@ export function useStartGame() {
   });
 }
 
+export function useStartVoting() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (lobbyId: number) => {
+      const url = buildUrl(api.lobbies.startVoting.path, { id: lobbyId });
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) throw new Error("Failed to start voting");
+      return api.lobbies.startVoting.responses[200].parse(await res.json());
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.lobbies.join.path] });
+      toast({ title: "Głosowanie rozpoczęte!", description: "Wszyscy mogą teraz głosować." });
+    },
+  });
+}
+
 export function useVote() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -167,7 +188,7 @@ export function useVote() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.lobbies.join.path] });
-      toast({ title: "Vote Cast", description: "Waiting for others..." });
+      toast({ title: "Głos oddany!", description: "Czekamy na pozostałych graczy..." });
     },
   });
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRoute, useLocation } from "wouter";
-import { useGameState, useUpdateSettings, useStartGame, useVote, useGuessWord, useNextRound, useLeaveLobby, useKickPlayer } from "@/hooks/use-game";
+import { useGameState, useUpdateSettings, useStartGame, useStartVoting, useVote, useGuessWord, useNextRound, useLeaveLobby, useKickPlayer } from "@/hooks/use-game";
 import { PlayerList } from "@/components/PlayerList";
 import { GameSettings } from "@/components/GameSettings";
 import { RoleCard } from "@/components/RoleCard";
@@ -28,6 +28,7 @@ export default function GameLobby() {
   // Hooks
   const updateSettings = useUpdateSettings();
   const startGame = useStartGame();
+  const startVoting = useStartVoting();
   const castVote = useVote();
   const guessWord = useGuessWord();
   const nextRound = useNextRound();
@@ -288,10 +289,10 @@ export default function GameLobby() {
                   className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90"
                   onClick={() => nextRound.mutate(lobby.id)}
                   disabled={nextRound.isPending}
-                  data-testid="button-next-round"
+                  data-testid="button-next-game"
                 >
                   {nextRound.isPending ? <Loader2 className="animate-spin mr-2" /> : null}
-                  Przejdź do następnej rundy
+                  Następna gra
                 </Button>
                 <Button size="lg" className="w-full" variant="outline" onClick={() => setLocation("/")}>
                   Powrót do menu
@@ -313,14 +314,15 @@ export default function GameLobby() {
         {(lobby.status === 'voting' || lobby.status === 'playing') && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold">Players</h3>
-              {lobby.status === 'playing' && !me?.hasVoted && (
+              <h3 className="text-lg font-bold">Gracze</h3>
+              {lobby.status === 'playing' && isHost && (
                 <Button 
                   variant="secondary" 
                   size="sm" 
-                  onClick={() => handleVote(null)} // Trigger vote phase logic usually on backend, simplified here
+                  onClick={() => startVoting.mutate(lobby.id)}
+                  disabled={startVoting.isPending}
                 >
-                  Call Vote
+                  Rozpocznij głosowanie
                 </Button>
               )}
             </div>
