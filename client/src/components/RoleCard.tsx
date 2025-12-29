@@ -6,11 +6,9 @@ import { Eye, EyeOff, Skull, ShieldCheck } from "lucide-react";
 interface RoleCardProps {
   role: "impostor" | "innocent" | null;
   word?: string;
-  hint?: string;
-  category?: string;
 }
 
-export function RoleCard({ role, word, hint, category }: RoleCardProps) {
+export function RoleCard({ role, word }: RoleCardProps) {
   const [isRevealed, setIsRevealed] = useState(false);
 
   if (!role) return null;
@@ -70,22 +68,17 @@ export function RoleCard({ role, word, hint, category }: RoleCardProps) {
             <div className="w-full h-px bg-white/10 my-6" />
 
             <div className="space-y-4 text-center w-full">
-              <div>
-                <span className="text-xs uppercase tracking-widest text-muted-foreground">Category</span>
-                <p className="text-lg font-bold">{category}</p>
-              </div>
-
               {isImpostor ? (
                 <div className="bg-destructive/10 p-4 rounded-xl border border-destructive/20">
-                  <span className="text-xs uppercase tracking-widest text-destructive">Your Hint</span>
-                  <p className="text-xl font-bold text-foreground mt-1">{hint}</p>
-                  <p className="text-xs text-destructive/80 mt-2">Blend in. Figure out the secret word.</p>
+                  <span className="text-xs uppercase tracking-widest text-destructive">Twoja podpowiedź</span>
+                  <p className="text-xl font-bold text-foreground mt-1">{word || 'Brak podpowiedzi'}</p>
+                  <p className="text-xs text-destructive/80 mt-2">Pasuj do grupy. Odkryj tajne słowo.</p>
                 </div>
               ) : (
                 <div className="bg-primary/10 p-4 rounded-xl border border-primary/20">
-                  <span className="text-xs uppercase tracking-widest text-primary">Secret Word</span>
+                  <span className="text-xs uppercase tracking-widest text-primary">Tajne Słowo</span>
                   <p className="text-2xl font-black text-foreground mt-1">{word}</p>
-                  <p className="text-xs text-primary/80 mt-2">Find the impostor who doesn't know this.</p>
+                  <p className="text-xs text-primary/80 mt-2">Znajdź impostora który tego nie zna.</p>
                 </div>
               )}
             </div>

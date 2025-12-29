@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { WS_EVENTS } from "@shared/schema";
 import { z } from "zod";
+import { WORD_CATEGORIES } from "./words";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -157,22 +158,33 @@ export async function registerRoutes(
     const impostors = shuffled.slice(0, numImpostors);
     const innocents = shuffled.slice(numImpostors);
 
+    // Get random word and hint
+    const allCategories = Object.keys(WORD_CATEGORIES);
+    const randomCat = allCategories[Math.floor(Math.random() * allCategories.length)];
+    const words = WORD_CATEGORIES[randomCat];
+    const randomWordObj = words[Math.floor(Math.random() * words.length)];
+    const secretWord = randomWordObj.word;
+    const hint = randomWordObj.hint;
+
+    // Assign words/hints
     for (const p of impostors) {
-      await storage.updatePlayer(p.id, { role: 'impostor', hasVoted: false, votedFor: null });
+      await storage.updatePlayer(p.id, { 
+        role: 'impostor', 
+        hasVoted: false, 
+        votedFor: null,
+        word: lobby.settings.giveHint ? hint : ''
+      });
     }
     for (const p of innocents) {
-      await storage.updatePlayer(p.id, { role: 'innocent', hasVoted: false, votedFor: null });
+      await storage.updatePlayer(p.id, { 
+        role: 'innocent', 
+        hasVoted: false, 
+        votedFor: null,
+        word: secretWord
+      });
     }
 
     const updatedLobby = await storage.updateLobby(lobbyId, { status: 'playing' });
-    
-    // Broadcast START
-    // We need to send role-specific info? 
-    // Actually the client will just request state or we send generic update and client hides/shows based on 'me'
-    // But broadcast sends same msg to all. 
-    // The client needs to know THEIR role. 
-    // We can broadcast a "GAME_START" event, and client re-fetches or we send individual messages.
-    // For simplicity, let's send individual messages in the broadcast loop.
     
     players.forEach(async (p) => {
       const client = clients.get(p.id);

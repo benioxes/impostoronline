@@ -44,9 +44,7 @@ export class MemStorage implements IStorage {
       status: 'waiting',
       settings: {
         numImpostors: 1,
-        category: 'General',
-        word: '',
-        hint: ''
+        giveHint: false
       },
       createdAt: new Date(),
     };
@@ -61,7 +59,8 @@ export class MemStorage implements IStorage {
       isHost: true,
       socketId: null,
       hasVoted: false,
-      votedFor: null
+      votedFor: null,
+      word: null
     };
     this.players.set(playerId, player);
 
@@ -81,7 +80,8 @@ export class MemStorage implements IStorage {
       isHost: false,
       socketId: null,
       hasVoted: false,
-      votedFor: null
+      votedFor: null,
+      word: null
     };
     this.players.set(playerId, player);
 

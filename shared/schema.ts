@@ -12,14 +12,10 @@ export const lobbies = pgTable("lobbies", {
   status: text("status").notNull().default("waiting"), // waiting, playing, voting, finished
   settings: jsonb("settings").$type<{
     numImpostors: number;
-    category: string;
-    word: string; // The secret word (hidden from impostor)
-    hint: string; // Hint for the impostor (or everyone?) - User said "hint for impostor"
+    giveHint: boolean; // Whether impostor gets a hint
   }>().notNull().default({
     numImpostors: 1,
-    category: "General",
-    word: "",
-    hint: ""
+    giveHint: false
   }),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -33,6 +29,7 @@ export const players = pgTable("players", {
   socketId: text("socket_id"), // For realtime communication
   hasVoted: boolean("has_voted").default(false),
   votedFor: integer("voted_for"), // ID of player voted for, or null for skip
+  word: text("word"), // Secret word for innocent, hint for impostor
 });
 
 // === RELATIONS ===
@@ -66,9 +63,7 @@ export type JoinLobbyRequest = {
 
 export type UpdateSettingsRequest = {
   numImpostors?: number;
-  category?: string;
-  word?: string;
-  hint?: string;
+  giveHint?: boolean;
 };
 
 export type VoteRequest = {

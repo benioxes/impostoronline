@@ -224,8 +224,8 @@ export default function GameLobby() {
             <div>
               <h2 className="text-4xl font-display font-black mb-2">GAME OVER</h2>
               <div className="p-4 bg-white/5 rounded-xl border border-white/10 inline-block">
-                <span className="block text-xs uppercase text-muted-foreground mb-1">Secret Word Was</span>
-                <span className="text-2xl font-bold text-primary">{lobby.settings.word}</span>
+                <span className="block text-xs uppercase text-muted-foreground mb-1">Tajne Słowo To Było</span>
+                <span className="text-2xl font-bold text-primary">{me?.word || 'Gra skończona'}</span>
               </div>
             </div>
             
@@ -241,9 +241,7 @@ export default function GameLobby() {
         {lobby.status !== 'finished' && (
           <RoleCard 
             role={me?.role as any} 
-            word={lobby.settings.word}
-            hint={lobby.settings.hint}
-            category={lobby.settings.category}
+            word={me?.word || undefined}
           />
         )}
 
