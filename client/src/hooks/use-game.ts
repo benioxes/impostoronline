@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, buildUrl, type GameStateResponse, type CreateLobbyRequest, type JoinLobbyRequest, type UpdateSettingsRequest, type VoteRequest } from "@shared/routes";
+import { api, buildUrl } from "@shared/routes";
 import { useLocation } from "wouter";
 import { useEffect, useState } from "react";
-import { type Lobby, type Player, WS_EVENTS } from "@shared/schema";
+import { type Lobby, type Player, WS_EVENTS, type GameStateResponse, type CreateLobbyRequest, type JoinLobbyRequest, type UpdateSettingsRequest, type VoteRequest } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
 // Helper to get persistent player ID

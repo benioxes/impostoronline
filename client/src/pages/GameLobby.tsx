@@ -7,7 +7,7 @@ import { RoleCard } from "@/components/RoleCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
-import { Loader2, Copy, Play, SkipForward, AlertTriangle, Trophy } from "lucide-react";
+import { Loader2, Copy, Play, SkipForward, AlertTriangle, Trophy, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from 'canvas-confetti';
@@ -58,9 +58,9 @@ export default function GameLobby() {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-background p-4 text-center">
         <AlertTriangle className="w-16 h-16 text-destructive mb-4" />
-        <h2 className="text-2xl font-bold mb-2">Game Not Found</h2>
-        <p className="text-muted-foreground mb-6">This lobby might have closed or doesn't exist.</p>
-        <Button onClick={() => setLocation("/")}>Back to Home</Button>
+        <h2 className="text-2xl font-bold mb-2">Gra nie znaleziona</h2>
+        <p className="text-muted-foreground mb-6">To lobby mogło zostać zamknięte lub nie istnieje.</p>
+        <Button onClick={() => setLocation("/")}>Powrót do strony głównej</Button>
       </div>
     );
   }
@@ -72,7 +72,7 @@ export default function GameLobby() {
   // -- HANDLERS --
   const copyCode = () => {
     navigator.clipboard.writeText(code);
-    toast({ title: "Code Copied!", description: "Send it to your friends." });
+    toast({ title: "Kod skopiowany!", description: "Wyślij go swoim przyjaciołom." });
   };
 
   const handleSkipVote = () => {
@@ -100,10 +100,10 @@ export default function GameLobby() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-white/5 pb-6">
             <div>
               <h1 className="text-3xl font-display font-bold">Lobby</h1>
-              <p className="text-muted-foreground">Waiting for players...</p>
+              <p className="text-muted-foreground">Czekamy na graczy...</p>
             </div>
             <div className="flex items-center gap-2 bg-secondary/50 px-6 py-3 rounded-xl border border-white/10">
-              <span className="text-muted-foreground uppercase text-xs font-bold tracking-wider">Code:</span>
+              <span className="text-muted-foreground uppercase text-xs font-bold tracking-wider">Kod:</span>
               <span className="font-mono text-2xl font-bold tracking-widest text-primary">{code}</span>
               <Button size="icon" variant="ghost" className="h-8 w-8 ml-2" onClick={copyCode}>
                 <Copy className="w-4 h-4" />
@@ -117,10 +117,10 @@ export default function GameLobby() {
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                   <Users className="w-5 h-5" />
-                  Players <span className="text-muted-foreground text-sm font-normal">({players.length})</span>
+                  Gracze <span className="text-muted-foreground text-sm font-normal">({players.length})</span>
                 </h2>
               </div>
-              <PlayerList players={players} hostId={players.find(p => p.isHost)?.id} />
+              <PlayerList players={players} hostId={players.find((p: typeof players[0]) => p.isHost)?.id} />
               
               {isHost && (
                 <div className="pt-4">
@@ -131,16 +131,16 @@ export default function GameLobby() {
                     disabled={players.length < 3}
                   >
                     {startGame.isPending ? <Loader2 className="animate-spin mr-2" /> : <Play className="w-5 h-5 mr-2 fill-current" />}
-                    Start Game
+                    Rozpocznij grę
                   </Button>
                   {players.length < 3 && (
-                    <p className="text-center text-xs text-muted-foreground mt-2">Need at least 3 players to start.</p>
+                    <p className="text-center text-xs text-muted-foreground mt-2">Potrzebujesz co najmniej 3 graczy, aby rozpocząć.</p>
                   )}
                 </div>
               )}
               {!isHost && (
                 <div className="text-center p-8 bg-white/5 rounded-xl border border-white/5 animate-pulse">
-                  <p className="text-muted-foreground">Waiting for host to start...</p>
+                  <p className="text-muted-foreground">Czekamy na gospodarza, aby rozpoczął grę...</p>
                 </div>
               )}
             </div>

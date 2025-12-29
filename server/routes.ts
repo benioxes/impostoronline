@@ -64,7 +64,7 @@ export async function registerRoutes(
   app.post(api.lobbies.create.path, async (req, res) => {
     try {
       const { playerName } = api.lobbies.create.input.parse(req.body);
-      const hostId = req.sessionID || 'host-' + Date.now();
+      const hostId = (req as any).sessionID || 'host-' + Date.now();
       const { lobby, player } = await storage.createLobby(hostId, playerName);
       res.status(201).json({ lobby, player });
     } catch (err) {

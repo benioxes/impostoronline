@@ -42,29 +42,29 @@ export default function Landing() {
           <h1 className="text-5xl font-display font-bold mb-2 tracking-tight">
             IMPOSTOR<span className="text-primary">.ONLINE</span>
           </h1>
-          <p className="text-muted-foreground text-lg">Deceive your friends. Find the truth.</p>
+          <p className="text-muted-foreground text-lg">Oszukaj przyjaciół. Odkryj prawdę.</p>
         </div>
 
         <Card className="glass-card border-0 shadow-2xl">
           <CardContent className="p-6">
             <Tabs defaultValue="join" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6 bg-black/20">
-                <TabsTrigger value="join">Join Game</TabsTrigger>
-                <TabsTrigger value="create">Create Lobby</TabsTrigger>
+                <TabsTrigger value="join">Dołącz do gry</TabsTrigger>
+                <TabsTrigger value="create">Utwórz lobby</TabsTrigger>
               </TabsList>
 
               <TabsContent value="join" className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">Your Name</label>
+                  <label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">Twoja nazwa</label>
                   <Input 
-                    placeholder="Enter your nickname..." 
+                    placeholder="Wpisz swój pseudonim..." 
                     className="h-12 bg-background/50 border-white/10"
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">Lobby Code</label>
+                  <label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">Kod lobby</label>
                   <Input 
                     placeholder="ABCD" 
                     maxLength={4}
@@ -78,29 +78,29 @@ export default function Landing() {
                   onClick={handleJoin}
                   disabled={joinLobby.isPending || !playerName || lobbyCode.length !== 4}
                 >
-                  {joinLobby.isPending ? <Loader2 className="animate-spin" /> : "Join Game"}
+                  {joinLobby.isPending ? <Loader2 className="animate-spin" /> : "Dołącz do gry"}
                 </Button>
               </TabsContent>
 
               <TabsContent value="create" className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">Your Name</label>
+                  <label className="text-xs uppercase font-bold text-muted-foreground tracking-wider">Twoja nazwa</label>
                   <Input 
-                    placeholder="Enter your nickname..." 
+                    placeholder="Wpisz swój pseudonim..." 
                     className="h-12 bg-background/50 border-white/10"
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
                   />
                 </div>
                 <div className="p-4 rounded-lg bg-secondary/50 border border-white/5 text-sm text-muted-foreground">
-                  <p>You will be the host. You can configure the game settings in the next screen.</p>
+                  <p>Będziesz gospodarzem. Możesz skonfigurować ustawienia gry na następnym ekranie.</p>
                 </div>
                 <Button 
                   className="w-full h-12 text-lg font-bold bg-secondary hover:bg-secondary/80 text-white mt-2 border border-white/10"
                   onClick={handleCreate}
                   disabled={createLobby.isPending || !playerName}
                 >
-                  {createLobby.isPending ? <Loader2 className="animate-spin" /> : "Create New Lobby"}
+                  {createLobby.isPending ? <Loader2 className="animate-spin" /> : "Utwórz nowe lobby"}
                 </Button>
               </TabsContent>
             </Tabs>
