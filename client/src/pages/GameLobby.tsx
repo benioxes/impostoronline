@@ -7,7 +7,7 @@ import { RoleCard } from "@/components/RoleCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
-import { Loader2, Copy, Play, SkipForward, AlertTriangle, Trophy, Users, LogOut } from "lucide-react";
+import { Loader2, Copy, Play, SkipForward, AlertTriangle, Trophy, Users, LogOut, Link as LinkIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from 'canvas-confetti';
@@ -75,6 +75,12 @@ export default function GameLobby() {
     toast({ title: "Kod skopiowany!", description: "Wyślij go swoim przyjaciołom." });
   };
 
+  const copyJoinLink = () => {
+    const joinLink = `${window.location.origin}/game/${code}`;
+    navigator.clipboard.writeText(joinLink);
+    toast({ title: "Link skopiowany!", description: "Podziel się tym linkiem ze swoimi przyjaciółmi." });
+  };
+
   const handleExit = () => {
     setLocation("/");
   };
@@ -106,18 +112,27 @@ export default function GameLobby() {
               <h1 className="text-3xl font-display font-bold">Lobby</h1>
               <p className="text-muted-foreground">Czekamy na graczy...</p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-secondary/50 px-6 py-3 rounded-xl border border-white/10">
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              <div className="flex items-center gap-2 bg-secondary/50 px-4 py-2 rounded-xl border border-white/10">
                 <span className="text-muted-foreground uppercase text-xs font-bold tracking-wider">Kod:</span>
-                <span className="font-mono text-2xl font-bold tracking-widest text-primary">{code}</span>
-                <Button size="icon" variant="ghost" className="h-8 w-8 ml-2" onClick={copyCode}>
-                  <Copy className="w-4 h-4" />
+                <span className="font-mono font-bold tracking-widest text-primary">{code}</span>
+                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={copyCode} title="Kopiuj kod">
+                  <Copy className="w-3 h-3" />
                 </Button>
               </div>
               <Button 
+                variant="outline" 
+                className="border-primary/20 hover:border-primary/50 text-xs gap-1 px-3 h-9"
+                onClick={copyJoinLink}
+                title="Kopiuj link do dołączenia"
+              >
+                <LinkIcon className="w-3 h-3" />
+                Kopiuj link
+              </Button>
+              <Button 
                 size="icon" 
                 variant="outline" 
-                className="h-10 w-10 border-red-500/20 hover:border-red-500/50 hover:text-red-500"
+                className="h-9 w-9 border-red-500/20 hover:border-red-500/50 hover:text-red-500"
                 onClick={handleExit}
                 title="Wyjdź do menu"
               >
