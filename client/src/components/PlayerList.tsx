@@ -1,7 +1,8 @@
 import { Player } from "@shared/schema";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Crown, CheckCircle2, User, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Crown, CheckCircle2, User, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PlayerListProps {
@@ -10,9 +11,11 @@ interface PlayerListProps {
   showVotes?: boolean; // If true, show who has voted
   onVote?: (targetId: number | null) => void; // If provided, list is interactive for voting
   currentVoteTarget?: number | null;
+  canKick?: boolean; // If true, show kick button for non-host players
+  onKick?: (playerId: number) => void;
 }
 
-export function PlayerList({ players, hostId, showVotes, onVote, currentVoteTarget }: PlayerListProps) {
+export function PlayerList({ players, hostId, showVotes, onVote, currentVoteTarget, canKick, onKick }: PlayerListProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
       {players.map((player) => {
@@ -33,8 +36,8 @@ export function PlayerList({ players, hostId, showVotes, onVote, currentVoteTarg
             )}
           >
             <div className="flex flex-col items-center gap-3">
-              <div className="relative">
-                <Avatar className="w-16 h-16 border-2 border-white/10 shadow-inner">
+              <div className="relative w-full">
+                <Avatar className="w-16 h-16 border-2 border-white/10 shadow-inner mx-auto">
                   <AvatarFallback className="bg-background text-lg font-bold font-display">
                     {player.name.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
@@ -50,6 +53,21 @@ export function PlayerList({ players, hostId, showVotes, onVote, currentVoteTarg
                   <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 shadow-lg animate-in zoom-in">
                     <CheckCircle2 className="w-4 h-4 text-white" />
                   </div>
+                )}
+
+                {canKick && !isHost && (
+                  <Button
+                    size="icon"
+                    variant="destructive"
+                    className="absolute -top-2 -left-2 h-6 w-6"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onKick?.(player.id);
+                    }}
+                    data-testid={`button-kick-${player.id}`}
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
                 )}
               </div>
 

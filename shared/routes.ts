@@ -84,6 +84,26 @@ export const api = {
         403: errorSchemas.validation,
         404: errorSchemas.notFound,
       },
+    },
+    leave: {
+      method: 'POST' as const,
+      path: '/api/lobbies/:id/leave',
+      input: z.object({ playerId: z.number() }),
+      responses: {
+        200: z.object({ success: z.boolean() }),
+        403: errorSchemas.validation,
+        404: errorSchemas.notFound,
+      },
+    },
+    kick: {
+      method: 'POST' as const,
+      path: '/api/lobbies/:id/kick',
+      input: z.object({ targetPlayerId: z.number() }),
+      responses: {
+        200: z.object({ success: z.boolean() }),
+        403: errorSchemas.validation,
+        404: errorSchemas.notFound,
+      },
     }
   },
 };

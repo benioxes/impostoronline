@@ -361,5 +361,46 @@ export async function registerRoutes(
     res.json(updatedLobby);
   });
 
+  app.post(api.lobbies.leave.path, async (req, res) => {
+    const lobbyId = parseInt(req.params.id);
+    const { playerId } = api.lobbies.leave.input.parse(req.body);
+
+    const player = await storage.getPlayer(playerId);
+    if (!player || player.lobbyId !== lobbyId) {
+      return res.status(403).json({ message: 'Invalid player or lobby' });
+    }
+
+    await storage.deletePlayer(playerId);
+
+    const players = await storage.getPlayers(lobbyId);
+    broadcast(lobbyId, WS_EVENTS.LOBBY_UPDATE, {
+      players
+    });
+
+    res.json({ success: true });
+  });
+
+  app.post(api.lobbies.kick.path, async (req, res) => {
+    const lobbyId = parseInt(req.params.id);
+    const { targetPlayerId } = api.lobbies.kick.input.parse(req.body);
+
+    const lobby = await storage.getLobby(lobbyId);
+    if (!lobby) return res.status(404).json({ message: 'Lobby not found' });
+
+    const targetPlayer = await storage.getPlayer(targetPlayerId);
+    if (!targetPlayer || targetPlayer.lobbyId !== lobbyId) {
+      return res.status(403).json({ message: 'Invalid player' });
+    }
+
+    await storage.deletePlayer(targetPlayerId);
+
+    const players = await storage.getPlayers(lobbyId);
+    broadcast(lobbyId, WS_EVENTS.LOBBY_UPDATE, {
+      players
+    });
+
+    res.json({ success: true });
+  });
+
   return httpServer;
 }

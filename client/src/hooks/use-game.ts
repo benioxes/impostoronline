@@ -222,3 +222,53 @@ export function useNextRound() {
     },
   });
 }
+
+export function useLeaveLobby() {
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ lobbyId }: { lobbyId: number }) => {
+      const url = buildUrl(api.lobbies.leave.path, { id: lobbyId });
+      const playerId = getPlayerId();
+      if (!playerId) throw new Error("No player ID found");
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playerId }),
+      });
+      if (!res.ok) throw new Error("Failed to leave lobby");
+      return api.lobbies.leave.responses[200].parse(await res.json());
+    },
+    onSuccess: () => {
+      toast({ title: "Opuściłeś lobby", description: "Powrót do strony głównej..." });
+      setLocation("/");
+    },
+    onError: (err) => {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+  });
+}
+
+export function useKickPlayer() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ lobbyId, targetPlayerId }: { lobbyId: number, targetPlayerId: number }) => {
+      const url = buildUrl(api.lobbies.kick.path, { id: lobbyId });
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetPlayerId }),
+      });
+      if (!res.ok) throw new Error("Failed to kick player");
+      return api.lobbies.kick.responses[200].parse(await res.json());
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.lobbies.join.path] });
+      toast({ title: "Gracz wyrzucony", description: "Gracz został usunięty z lobby." });
+    },
+  });
+}

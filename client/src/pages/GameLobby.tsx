@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRoute, useLocation } from "wouter";
-import { useGameState, useUpdateSettings, useStartGame, useVote, useGuessWord, useNextRound } from "@/hooks/use-game";
+import { useGameState, useUpdateSettings, useStartGame, useVote, useGuessWord, useNextRound, useLeaveLobby, useKickPlayer } from "@/hooks/use-game";
 import { PlayerList } from "@/components/PlayerList";
 import { GameSettings } from "@/components/GameSettings";
 import { RoleCard } from "@/components/RoleCard";
@@ -31,6 +31,8 @@ export default function GameLobby() {
   const castVote = useVote();
   const guessWord = useGuessWord();
   const nextRound = useNextRound();
+  const leaveLobby = useLeaveLobby();
+  const kickPlayer = useKickPlayer();
 
   // Local state
   const [guessInput, setGuessInput] = useState("");
@@ -151,27 +153,46 @@ export default function GameLobby() {
                   Gracze <span className="text-muted-foreground text-sm font-normal">({players.length})</span>
                 </h2>
               </div>
-              <PlayerList players={players} hostId={players.find((p: typeof players[0]) => p.isHost)?.id} />
+              <PlayerList 
+                players={players} 
+                hostId={players.find((p: typeof players[0]) => p.isHost)?.id}
+                canKick={isHost}
+                onKick={(playerId) => kickPlayer.mutate({ lobbyId: lobby.id, targetPlayerId: playerId })}
+              />
               
               {isHost && (
-                <div className="pt-4">
+                <div className="pt-4 space-y-3">
                   <Button 
                     size="lg" 
                     className="w-full text-lg font-bold bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 shadow-lg shadow-primary/20"
                     onClick={() => startGame.mutate(lobby.id)}
                     disabled={players.length < 3}
+                    data-testid="button-start-game"
                   >
                     {startGame.isPending ? <Loader2 className="animate-spin mr-2" /> : <Play className="w-5 h-5 mr-2 fill-current" />}
                     Rozpocznij grę
                   </Button>
                   {players.length < 3 && (
-                    <p className="text-center text-xs text-muted-foreground mt-2">Potrzebujesz co najmniej 3 graczy, aby rozpocząć.</p>
+                    <p className="text-center text-xs text-muted-foreground">Potrzebujesz co najmniej 3 graczy, aby rozpocząć.</p>
                   )}
                 </div>
               )}
               {!isHost && (
-                <div className="text-center p-8 bg-white/5 rounded-xl border border-white/5 animate-pulse">
-                  <p className="text-muted-foreground">Czekamy na gospodarza, aby rozpoczął grę...</p>
+                <div className="text-center p-4 space-y-3">
+                  <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+                    <p className="text-muted-foreground text-sm">Czekamy na gospodarza, aby rozpoczął grę...</p>
+                  </div>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="w-full border-red-500/20 hover:border-red-500/50 hover:text-red-500"
+                    onClick={() => leaveLobby.mutate({ lobbyId: lobby.id })}
+                    disabled={leaveLobby.isPending}
+                    data-testid="button-leave-lobby"
+                  >
+                    {leaveLobby.isPending ? <Loader2 className="animate-spin mr-2" /> : null}
+                    Opuść lobby
+                  </Button>
                 </div>
               )}
             </div>
@@ -329,6 +350,17 @@ export default function GameLobby() {
                 <p className="text-xs text-muted-foreground">Waiting for others...</p>
               </div>
             )}
+
+            <Button 
+              variant="outline" 
+              className="w-full border-red-500/20 hover:border-red-500/50 hover:text-red-500"
+              onClick={() => leaveLobby.mutate({ lobbyId: lobby.id })}
+              disabled={leaveLobby.isPending}
+              data-testid="button-leave-during-game"
+            >
+              {leaveLobby.isPending ? <Loader2 className="animate-spin mr-2" /> : null}
+              Opuść grę
+            </Button>
           </div>
         )}
       </div>
