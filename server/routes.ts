@@ -100,6 +100,27 @@ export async function registerRoutes(
     }
   });
 
+  // GET endpoint to fetch lobby state by code
+  app.get('/api/lobbies/:code/state', async (req, res) => {
+    try {
+      const code = req.params.code.toUpperCase();
+      const playerId = req.query.playerId ? parseInt(req.query.playerId as string) : null;
+      
+      const lobby = await storage.getLobbyByCode(code);
+      if (!lobby) {
+        return res.status(404).json({ message: 'Gra nie znaleziona' });
+      }
+
+      const players = await storage.getPlayers(lobby.id);
+      const me = playerId ? await storage.getPlayer(playerId) : undefined;
+
+      res.json({ lobby, players, me });
+    } catch (err) {
+      console.error('Error fetching lobby state:', err);
+      res.status(500).json({ message: 'Błąd wewnętrzny serwera' });
+    }
+  });
+
   app.put(api.lobbies.updateSettings.path, async (req, res) => {
     const lobbyId = parseInt(req.params.id);
     const lobby = await storage.getLobby(lobbyId);
