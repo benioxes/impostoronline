@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRoute, useLocation } from "wouter";
-import { useGameState, useUpdateSettings, useStartGame, useVote, useGuessWord } from "@/hooks/use-game";
+import { useGameState, useUpdateSettings, useStartGame, useVote, useGuessWord, useNextRound } from "@/hooks/use-game";
 import { PlayerList } from "@/components/PlayerList";
 import { GameSettings } from "@/components/GameSettings";
 import { RoleCard } from "@/components/RoleCard";
@@ -30,6 +30,7 @@ export default function GameLobby() {
   const startGame = useStartGame();
   const castVote = useVote();
   const guessWord = useGuessWord();
+  const nextRound = useNextRound();
 
   // Local state
   const [guessInput, setGuessInput] = useState("");
@@ -260,9 +261,21 @@ export default function GameLobby() {
             </div>
             
             {isHost && (
-              <Button size="lg" className="w-full" onClick={() => setLocation("/")}>
-                Back to Home
-              </Button>
+              <div className="space-y-3">
+                <Button 
+                  size="lg" 
+                  className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90"
+                  onClick={() => nextRound.mutate(lobby.id)}
+                  disabled={nextRound.isPending}
+                  data-testid="button-next-round"
+                >
+                  {nextRound.isPending ? <Loader2 className="animate-spin mr-2" /> : null}
+                  Przejdź do następnej rundy
+                </Button>
+                <Button size="lg" className="w-full" variant="outline" onClick={() => setLocation("/")}>
+                  Powrót do menu
+                </Button>
+              </div>
             )}
           </motion.div>
         )}

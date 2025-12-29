@@ -333,5 +333,33 @@ export async function registerRoutes(
      res.json({ correct: isCorrect, gameOver: isCorrect });
   });
 
+  app.post(api.lobbies.nextRound.path, async (req, res) => {
+    const lobbyId = parseInt(req.params.id);
+    const lobby = await storage.getLobby(lobbyId);
+    if (!lobby) return res.status(404).json({ message: 'Lobby not found' });
+
+    const players = await storage.getPlayers(lobbyId);
+    
+    // Reset players for next round
+    for (const p of players) {
+      await storage.updatePlayer(p.id, {
+        role: undefined as any,
+        hasVoted: false,
+        votedFor: null,
+        word: null as any
+      });
+    }
+
+    // Reset lobby to waiting state
+    const updatedLobby = await storage.updateLobby(lobbyId, { status: 'waiting' });
+
+    broadcast(lobbyId, WS_EVENTS.LOBBY_UPDATE, {
+      lobby: updatedLobby,
+      players: await storage.getPlayers(lobbyId)
+    });
+
+    res.json(updatedLobby);
+  });
+
   return httpServer;
 }

@@ -201,3 +201,24 @@ export function useGuessWord() {
     }
   });
 }
+
+export function useNextRound() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (lobbyId: number) => {
+      const url = buildUrl(api.lobbies.nextRound.path, { id: lobbyId });
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) throw new Error("Failed to start next round");
+      return api.lobbies.nextRound.responses[200].parse(await res.json());
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.lobbies.join.path] });
+      toast({ title: "Następna runda!", description: "Gra rozpoczyna się..." });
+    },
+  });
+}

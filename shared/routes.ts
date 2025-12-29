@@ -74,6 +74,16 @@ export const api = {
        responses: {
          200: z.object({ correct: z.boolean(), gameOver: z.boolean() }),
        }
+    },
+    nextRound: {
+      method: 'POST' as const,
+      path: '/api/lobbies/:id/next-round',
+      input: z.object({}),
+      responses: {
+        200: z.custom<typeof lobbies.$inferSelect>(),
+        403: errorSchemas.validation,
+        404: errorSchemas.notFound,
+      },
     }
   },
 };
