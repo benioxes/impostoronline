@@ -6,11 +6,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import GameLobby from "@/pages/GameLobby";
+import JoinWithLink from "@/pages/JoinWithLink";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Landing} />
+      <Route path="/join/:code" component={JoinWithLink} />
       <Route path="/game/:code" component={GameLobby} />
       <Route component={NotFound} />
     </Switch>

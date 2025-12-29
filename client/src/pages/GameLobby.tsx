@@ -79,9 +79,9 @@ export default function GameLobby() {
   };
 
   const copyJoinLink = () => {
-    const joinLink = `${window.location.origin}/game/${code}`;
-    navigator.clipboard.writeText(joinLink);
-    toast({ title: "Link skopiowany!", description: "Podziel się tym linkiem ze swoimi przyjaciółmi." });
+    const inviteLink = `${window.location.origin}/join/${code}`;
+    navigator.clipboard.writeText(inviteLink);
+    toast({ title: "Link zaproszenia skopiowany!", description: "Podziel się tym linkiem ze swoimi przyjaciółmi." });
   };
 
   const handleExit = () => {

@@ -1,15 +1,18 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { useCreateLobby, useJoinLobby } from "@/hooks/use-game";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Ghost, Users, ArrowRight, Loader2 } from "lucide-react";
+import { Ghost, Users, ArrowRight, Loader2, Copy, Check } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Landing() {
   const [playerName, setPlayerName] = useState("");
   const [lobbyCode, setLobbyCode] = useState("");
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [, setLocation] = useLocation();
   const createLobby = useCreateLobby();
   const joinLobby = useJoinLobby();
 
@@ -21,6 +24,13 @@ export default function Landing() {
   const handleJoin = () => {
     if (!playerName.trim() || lobbyCode.length !== 4) return;
     joinLobby.mutate({ code: lobbyCode.toUpperCase(), playerName });
+  };
+
+  const handleCopyInviteLink = (code: string) => {
+    const url = `${window.location.origin}/join/${code}`;
+    navigator.clipboard.writeText(url);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 2000);
   };
 
   return (
@@ -99,6 +109,7 @@ export default function Landing() {
                   className="w-full h-12 text-lg font-bold bg-secondary hover:bg-secondary/80 text-white mt-2 border border-white/10"
                   onClick={handleCreate}
                   disabled={createLobby.isPending || !playerName}
+                  data-testid="button-create-lobby"
                 >
                   {createLobby.isPending ? <Loader2 className="animate-spin" /> : "Utwórz nowe lobby"}
                 </Button>
