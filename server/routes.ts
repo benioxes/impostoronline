@@ -159,7 +159,7 @@ export async function registerRoutes(
     const innocents = shuffled.slice(numImpostors);
 
     // Get random word and hint
-    const allCategories = Object.keys(WORD_CATEGORIES);
+    const allCategories = Object.keys(WORD_CATEGORIES) as Array<keyof typeof WORD_CATEGORIES>;
     const randomCat = allCategories[Math.floor(Math.random() * allCategories.length)];
     const words = WORD_CATEGORIES[randomCat];
     const randomWordObj = words[Math.floor(Math.random() * words.length)];
@@ -312,7 +312,12 @@ export async function registerRoutes(
         return res.status(403).json({ message: 'Not allowed' });
      }
 
-     const isCorrect = word.toLowerCase().trim() === lobby.settings.word.toLowerCase().trim();
+     // Get secret word from an innocent player
+     const allPlayers = await storage.getPlayers(lobbyId);
+     const innocentPlayer = allPlayers.find(p => p.role === 'innocent');
+     const secretWord = innocentPlayer?.word || '';
+
+     const isCorrect = word.toLowerCase().trim() === secretWord.toLowerCase().trim();
      
      if (isCorrect) {
         // Impostor Wins
